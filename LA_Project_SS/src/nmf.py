@@ -3,10 +3,6 @@ import matplotlib.pyplot as plt
 import librosa
 
 def enhanced_initialization(data_matrix, rank):
-    '''
-    Enhanced initialization strategy based on SVD properties
-    Optimized for audio spectrograms
-    '''
     u, s, v = np.linalg.svd(data_matrix, full_matrices=False)
     v = v.T
     
@@ -20,19 +16,16 @@ def enhanced_initialization(data_matrix, rank):
         u_i = u[:, i]
         v_i = v[:, i]
         
-        # Decompose into positive and negative parts
         u_pos = np.maximum(u_i, 0)
         u_neg = np.maximum(-u_i, 0)
         v_pos = np.maximum(v_i, 0)
         v_neg = np.maximum(-v_i, 0)
         
-        # Calculate norms
         u_pos_norm = np.linalg.norm(u_pos, 2)
         u_neg_norm = np.linalg.norm(u_neg, 2)
         v_pos_norm = np.linalg.norm(v_pos, 2)
         v_neg_norm = np.linalg.norm(v_neg, 2)
         
-        # Calculate projection magnitudes
         pos_magnitude = u_pos_norm * v_pos_norm
         neg_magnitude = u_neg_norm * v_neg_norm
         
@@ -48,10 +41,6 @@ def enhanced_initialization(data_matrix, rank):
 
 
 def calculate_cost(V, W, H, cost_type='kld'):
-    '''
-    Calculate the cost function between original and reconstructed matrices
-    KL divergence is particularly effective for audio spectra
-    '''
     epsilon = 1e-12
     reconstruction = W @ H
     
@@ -66,10 +55,6 @@ def calculate_cost(V, W, H, cost_type='kld'):
 
 
 def speech_nmf(V, rank, max_iterations=2000, threshold=1e-8, cost_type='kld', sparsity=0.1):
-    '''
-    Enhanced NMF optimized for speech separation with multiple cost functions
-    and sparsity constraints
-    '''
     V = np.maximum(V, 0)
     W, H = enhanced_initialization(V, rank)
     
@@ -98,7 +83,6 @@ def speech_nmf(V, rank, max_iterations=2000, threshold=1e-8, cost_type='kld', sp
         else:
             raise ValueError(f"Unsupported cost_type: {cost_type}")
         
-        # Normalize W columns and scale H accordingly
         column_norms = np.linalg.norm(W, axis=0)
         column_norms[column_norms == 0] = 1.0
         W /= column_norms
@@ -115,33 +99,6 @@ def speech_nmf(V, rank, max_iterations=2000, threshold=1e-8, cost_type='kld', sp
 
 
 def NMF(V, rank, num_sources, clustering_method='frequency', **nmf_params):
-    '''
-    Separate audio sources by clustering NMF components
-    
-    Parameters:
-    -----------
-    V : np.ndarray
-        Input spectrogram (magnitude)
-    rank : int
-        Number of NMF components
-    num_sources : int
-        Number of sources to separate
-    clustering_method : str
-        Method to assign components to sources ('frequency' supported)
-    nmf_params : dict
-        Additional parameters for speech_nmf
-    
-    Returns:
-    --------
-    source_spectrograms : list of np.ndarray
-        List of separated source spectrograms
-    W : np.ndarray
-        Basis matrix
-    H : np.ndarray
-        Activation matrix
-    component_assignments : np.ndarray
-        Array assigning each component to a source index
-    '''
     W, H, _ = speech_nmf(V, rank, **nmf_params)
     
     component_assignments = np.zeros(rank, dtype=int)
