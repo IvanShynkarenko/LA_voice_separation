@@ -1,15 +1,11 @@
-'''
-    Drawer module
-'''
+
 
 import numpy as np
 import librosa
 import matplotlib.pyplot as plt
 
 def plot(reconstructed_sounds, sr):
-    '''
-        Plots in wave form format
-    '''
+
     n = len(reconstructed_sounds)
     colors = ['b', 'y', 'g']
     _, ax = plt.subplots(nrows=n, ncols=1, sharex=True, figsize=(11, 3*n))
@@ -20,16 +16,6 @@ def plot(reconstructed_sounds, sr):
         ax[i].legend()
 
 def mean_squared_error(audio1, audio2):
-    '''
-    Compute the Mean Squared Error (MSE) between two audio signals.
-    
-    Parameters:
-    - audio1: numpy.ndarray, the first audio signal
-    - audio2: numpy.ndarray, the second audio signal
-    
-    Returns:
-    - mse: float, the mean squared error between the two signals
-    '''
     min_length = min(len(audio1), len(audio2))
     audio1 = audio1[:min_length]
     audio2 = audio2[:min_length]
@@ -39,9 +25,6 @@ def mean_squared_error(audio1, audio2):
     return mse
 
 def plot_spectogram(y, sr, FRAME1 = 1024, HOP = 512):
-    '''
-        Spectogram func
-    '''
     D = librosa.stft(y, n_fft=FRAME1, hop_length=HOP)
     magnitude = np.abs(D)
     librosa.display.specshow(librosa.amplitude_to_db(magnitude), 
@@ -56,19 +39,6 @@ def RMSE(y1, y2):
     return rmse
 
 def spectral_difference(audio1, audio2, n_fft=2048, hop_length=512):
-    '''
-    Calculate the spectral difference between two audio signals.
-
-    Parameters:
-    - audio1 (np.ndarray): First audio signal.
-    - audio2 (np.ndarray): Second audio signal.
-    - sr (int): Sampling rate of the audio signals (default: 22050).
-    - n_fft (int): Number of samples per frame for the STFT (default: 2048).
-    - hop_length (int): Number of samples between frames for the STFT (default: 512).
-
-    Returns:
-    - float: Spectral difference between the two audio signals.
-    '''
     trim = min(len(audio1), len(audio2))
 
     audio1 = audio1[:trim]
