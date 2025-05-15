@@ -6,7 +6,7 @@
         Credits to: https://github.com/zahar-kohut-ucu
 '''
 
-# Mixer class
+
 import pyroomacoustics as pra
 import librosa
 import numpy as np
