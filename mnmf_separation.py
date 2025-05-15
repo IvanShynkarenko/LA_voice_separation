@@ -24,14 +24,11 @@ def nmf_with_beta_divergence(V, n_components, beta, max_iter=500):
 
 def separate_sources(y, sr, n_components=2, beta=1, max_iter=500):
     """Розділення джерел з використанням NMF та маскування."""
-    # Обчислення STFT
     S = np.abs(librosa.stft(y))
     phase = np.angle(librosa.stft(y))
 
-    # Застосування NMF з β-дивергенцією
     W, H = nmf_with_beta_divergence(S, n_components, beta, max_iter)
 
-    # Реконструкція джерел з використанням маскування
     sources = []
     for i in range(n_components):
         Vi = np.outer(W[:, i], H[i])
@@ -45,6 +42,5 @@ def separate_sources(y, sr, n_components=2, beta=1, max_iter=500):
 
     return sources
 
-# Приклад використання
 y, sr = librosa.load('final_combined_pipe_and_voice.wav', sr=None, mono=True)
 separate_sources(y, sr, n_components=2, beta=1, max_iter=1000)
